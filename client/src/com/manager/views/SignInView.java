@@ -122,7 +122,15 @@ public class SignInView {
             String username = usernameTextField.getText();
             String password = new String(passwordField.getPassword());
 
+            if (username.isBlank() || password.isBlank()) {
+                JOptionPane.showMessageDialog(frame, "Por favor completa todos los campos", "Atención", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
             HTTPController httpController = new HTTPController();
+
+
+
             AuthenticationResponse authenticationResponse = httpController.signIn(username, password);
 
             System.out.println(authenticationResponse);
@@ -137,6 +145,9 @@ public class SignInView {
                 // Aquí puedes guardar token en Session, abrir otra vista, etc.
                 JOptionPane.showMessageDialog(frame, "Bienvenido " + username);
                 frame.dispose(); // cerrar login si quieres
+
+
+                MenuView menuView = new MenuView();
 
                 System.out.println(authenticationResponse.accessToken());
             }

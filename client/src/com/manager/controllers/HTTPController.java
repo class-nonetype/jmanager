@@ -4,7 +4,7 @@ import com.manager.models.Session;
 import com.manager.models.AuthenticationResponse;
 
 import java.net.HttpURLConnection;
-import java.net.URL;
+import java.net.URI;
 import java.io.OutputStream;
 import java.io.InputStream;
 import java.util.Scanner;
@@ -17,8 +17,9 @@ public class HTTPController {
 
     public AuthenticationResponse signIn(String username, String password) {
         try {
-            URL url = new URL(baseURL + "/authentication/sign-in");
-            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            URI uri = new URI(baseURL + "/authentication/sign-in");
+            HttpURLConnection con = (HttpURLConnection) uri.toURL().openConnection();
+
             con.setRequestMethod("POST");
             con.setRequestProperty("Content-Type", "application/json");
             con.setDoOutput(true);
@@ -56,15 +57,33 @@ public class HTTPController {
     }
 
 
-    public static void verifySession(String accessToken) {
+    public AuthenticationResponse verifySession(String accessToken) {
         try {
-            URL url = new URL(baseURL + "/authentication/verify/session");
-            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            URI uri = new URI(baseURL + "/authentication/verify/session");
+            HttpURLConnection con = (HttpURLConnection) uri.toURL().openConnection();
+
             con.setRequestMethod("POST");
             con.setRequestProperty("Content-Type", "application/json");
             con.setDoOutput(true);
 
             // Authorization: String
+            String jsonBody = String.format("{\"Authorization\":\"%s\"}", accessToken);
+
+            // Enviar el body
+            try (OutputStream os = con.getOutputStream()) {
+                os.write(jsonBody.getBytes());
+                os.flush();
+            }
+
+            // Verificar estado HTTP
+            int httpStatusCode = con.getResponseCode();
+            if (httpStatusCode != 200) {
+                return new AuthenticationResponse(null, httpStatusCode);
+            }
+
+            System.out.println(con.getInputStream());
+
+            return new AuthenticationResponse(accessToken, httpStatusCode);
 
         } catch (Exception e) {
             e.printStackTrace();
