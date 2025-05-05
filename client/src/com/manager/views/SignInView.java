@@ -1,6 +1,8 @@
 package com.manager.views;
 
 import com.manager.controllers.HTTPController;
+import com.manager.models.AuthenticationResponse;
+
 import javax.swing.*;
 import javax.swing.border.MatteBorder;
 import java.awt.*;
@@ -118,19 +120,25 @@ public class SignInView {
 
         signInButton.addActionListener(e -> {
             String username = usernameTextField.getText();
-            String password = new String(passwordField.getPassword()); // ← porque es JPasswordField
-
+            String password = new String(passwordField.getPassword());
 
             HTTPController httpController = new HTTPController();
-            String accessToken = httpController.signIn(username, password);
+            AuthenticationResponse authenticationResponse = httpController.signIn(username, password);
 
-            if (accessToken == null || accessToken.startsWith("ERROR")) {
+            System.out.println(authenticationResponse);
+
+            if (
+                    authenticationResponse == null || !authenticationResponse.isSuccess()
+            ) {
                 JOptionPane.showMessageDialog(frame, "Credenciales inválidas", "Error", JOptionPane.ERROR_MESSAGE);
+
             } else {
-                httpController.setAccessToken(accessToken);
+                httpController.setAccessToken(authenticationResponse.accessToken());
                 // Aquí puedes guardar token en Session, abrir otra vista, etc.
                 JOptionPane.showMessageDialog(frame, "Bienvenido " + username);
                 frame.dispose(); // cerrar login si quieres
+
+                System.out.println(authenticationResponse.accessToken());
             }
         });
 
