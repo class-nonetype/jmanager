@@ -1,0 +1,14 @@
+fastapi
+pydantic
+uvicorn
+sqlalchemy
+PyJWT
+pytz
+python-dotenv
+python-multipart
+load-dotenv
+psycopg2-binary
+starlette
+bcrypt
+psycopg2
+typing-inspect
