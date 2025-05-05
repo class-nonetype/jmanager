@@ -55,6 +55,23 @@ public class HTTPController {
         }
     }
 
+
+    public static void verifySession(String accessToken) {
+        try {
+            URL url = new URL(baseURL + "/authentication/verify/session");
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("POST");
+            con.setRequestProperty("Content-Type", "application/json");
+            con.setDoOutput(true);
+
+            // Authorization: String
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     public void setAccessToken(String accessToken) {
         Session.setAccessToken(accessToken);
     }
